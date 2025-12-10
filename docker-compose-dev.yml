@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo_local
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGODB_DB: bussola_nerd
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - bussola_network
+
+volumes:
+  mongo_data:
+
+networks:
+  bussola_network:
+    driver: bridge
