@@ -13,6 +13,17 @@ import { DatabaseModule } from './database/database.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+
+import { HealthModule } from './modules/health/health.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
+import { CategoriesModule } from './modules/categories/categories.module';
+import { ContentsModule } from './modules/contents/contents.module';
+import { PodcastsModule } from './modules/podcasts/podcasts.module';
+import { ReviewsModule } from './modules/reviews/reviews.module';
+import { ReleasesModule } from './modules/releases/releases.module';
+import { ScheduleModule } from './modules/schedule/schedule.module';
+import { IntegrationModule } from './modules/integration/integration.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -31,7 +42,17 @@ import { AppService } from './app.service';
         abortEarly: false
       }
     }),
-    DatabaseModule
+    DatabaseModule,
+    HealthModule,
+    AuthModule,
+    UsersModule,
+    CategoriesModule,
+    ContentsModule,
+    PodcastsModule,
+    ReviewsModule,
+    ReleasesModule,
+    ScheduleModule,
+    IntegrationModule
   ],
   controllers: [AppController],
   providers: [AppService],
