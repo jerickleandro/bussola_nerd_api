@@ -8,6 +8,7 @@ import { spotifyConfig } from './config/spotify.config';
 import { releasesConfig } from './config/releases.config';
 import { scrapConfig } from './config/scrap.config';
 import { llmConfig } from './config/llm.config';
+import { APP_GUARD } from '@nestjs/core';
 
 import { DatabaseModule } from './database/database.module';
 
@@ -24,6 +25,8 @@ import { ReviewsModule } from './modules/reviews/reviews.module';
 import { ReleasesModule } from './modules/releases/releases.module';
 import { ScheduleModule } from './modules/schedule/schedule.module';
 import { IntegrationModule } from './modules/integration/integration.module';
+import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
+import { RolesGuard } from './common/guards/roles.guard';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -55,6 +58,13 @@ import { IntegrationModule } from './modules/integration/integration.module';
     IntegrationModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,{
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard
+    }],
 })
 export class AppModule {}

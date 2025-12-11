@@ -1,41 +1,20 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-
+import { Inject, Injectable } from '@nestjs/common';
 import { CONTENTS_REPOSITORY } from '../contents/domain/interfaces/contents.repository.interface';
-import { LLM_PROVIDER } from '../../shared/providers/llm/llm.provider.interface';
-
 import type { ContentsRepository } from '../contents/domain/interfaces/contents.repository.interface';
+import { LLM_PROVIDER } from '../../shared/providers/llm/llm.provider.interface';
 import type { LlmProvider } from '../../shared/providers/llm/llm.provider.interface';
+import { ImportNewsDto } from './dto/import-news.dto';
 
 @Injectable()
 export class IntegrationService {
-  private readonly scrapApiKey: string;
-
   constructor(
-    private readonly configService: ConfigService,
     @Inject(CONTENTS_REPOSITORY)
     private readonly contentsRepository: ContentsRepository,
     @Inject(LLM_PROVIDER)
     private readonly llmProvider: LlmProvider,
-  ) {
-    const scrapConfig = this.configService.get('scrap');
-    this.scrapApiKey = scrapConfig.apiKey;
-  }
+  ) {}
 
-  async importNewsFromScrap(
-    apiKey: string,
-    payload: {
-      title: string;
-      text: string;
-      url: string;
-      sourceName?: string;
-      tags?: string[];
-    },
-  ) {
-    if (apiKey !== this.scrapApiKey) {
-      throw new UnauthorizedException('Invalid scrap API key');
-    }
-
+  async importNewsFromScrap(payload: ImportNewsDto) {
     const result = await this.llmProvider.translateAndSummarize({
       originalText: payload.text,
       sourceLanguage: 'auto',
@@ -43,10 +22,9 @@ export class IntegrationService {
       maxSummaryChars: 600,
     });
 
-    // aqui, você poderia gerar slug a partir do título
     const slug = this.generateSlug(payload.title);
 
-    const content = await this.contentsRepository.create({
+    return this.contentsRepository.create({
       type: 'NEWS',
       title: payload.title,
       slug,
@@ -59,8 +37,6 @@ export class IntegrationService {
       status: 'PUBLISHED',
       publishedAt: new Date(),
     });
-
-    return content;
   }
 
   private generateSlug(title: string): string {

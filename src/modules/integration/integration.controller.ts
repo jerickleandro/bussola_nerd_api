@@ -1,22 +1,17 @@
-import { Body, Controller, Headers, Post } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { IntegrationService } from './integration.service';
+import { ImportNewsDto } from './dto/import-news.dto';
+import { ApiKeyGuard } from '../../common/guards/api-key.guard';
+import { Public } from '../../common/decorators/public.decorator';
 
 @Controller('internal')
 export class IntegrationController {
   constructor(private readonly integrationService: IntegrationService) {}
 
+  @Public() // não exige JWT
+  @UseGuards(ApiKeyGuard) // mas exige API key
   @Post('import/news')
-  importNews(
-    @Headers('x-api-key') apiKey: string,
-    @Body()
-    body: {
-      title: string;
-      text: string;
-      url: string;
-      sourceName?: string;
-      tags?: string[];
-    }
-  ) {
-    return this.integrationService.importNewsFromScrap(apiKey, body);
+  importNews(@Body() body: ImportNewsDto) {
+    return this.integrationService.importNewsFromScrap(body);
   }
 }
