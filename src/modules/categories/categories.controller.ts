@@ -31,7 +31,6 @@ export class CategoriesController {
   @Roles(Role.EDITOR, Role.ADMIN)
   @Patch(':id')
   update(@Param('id') id: string, @Body() body: UpdateCategoryDto) {
-    // implementar no service depois
-    return { id, ...body };
+    return this.categoriesService.update(id, body);
   }
 }
