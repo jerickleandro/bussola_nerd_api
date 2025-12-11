@@ -25,4 +25,5 @@ export interface ContentsRepository {
   findAll(): Promise<any[]>;
   findBySlug(slug: string): Promise<any | null>;
   create(data: CreateContentInput): Promise<any>;
+  update(slug: string, data: Partial<CreateContentInput>): Promise<any>;
 }

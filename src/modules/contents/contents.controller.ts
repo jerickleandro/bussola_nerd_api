@@ -34,7 +34,9 @@ export class ContentsController {
   @Roles(Role.EDITOR, Role.ADMIN)
   @Patch(':slug')
   update(@Param('slug') slug: string, @Body() body: UpdateContentDto) {
-    // TODO: implementar no service
-    return { slug, ...body };
+    return this.contentsService.update(slug, {
+      ...body,
+      publishedAt: body.publishedAt ? new Date(body.publishedAt) : undefined,
+    });
   }
 }

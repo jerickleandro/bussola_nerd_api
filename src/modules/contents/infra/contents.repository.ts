@@ -24,4 +24,14 @@ export class ContentsMongooseRepository implements ContentsRepository {
     const created = new this.contentModel(data);
     return created.save();
   }
+
+  async update(
+    slug: string,
+    data: Partial<CreateContentInput>,
+  ): Promise<Content | null> {
+    return this.contentModel
+      .findOneAndUpdate({ slug }, data, { new: true })
+      .lean()
+      .exec();
+  }
 }
