@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Headers } from '@nestjs/common';
+import { Body, Controller, Headers, Post } from '@nestjs/common';
 import { IntegrationService } from './integration.service';
 
 @Controller('internal')
@@ -7,10 +7,16 @@ export class IntegrationController {
 
   @Post('import/news')
   importNews(
-    @Body() body: any,
-    @Headers('x-api-key') apiKey: string
+    @Headers('x-api-key') apiKey: string,
+    @Body()
+    body: {
+      title: string;
+      text: string;
+      url: string;
+      sourceName?: string;
+      tags?: string[];
+    }
   ) {
-    // futuramente: validar apiKey (SCRAP_API_KEY)
-    return this.integrationService.importNewsFromScrap(body);
+    return this.integrationService.importNewsFromScrap(apiKey, body);
   }
 }

@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Post, Body } from '@nestjs/common';
-import { ContentsService } from './contents.service';
+import { ContentsService } from './domain/contents.service';
 
 
 @Controller('contents')

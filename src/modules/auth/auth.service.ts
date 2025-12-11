@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../users/domain/users.service';
+
 
 @Injectable()
 export class AuthService {
@@ -10,7 +11,6 @@ export class AuthService {
     private readonly jwtService: JwtService
   ) {}
 
-  // valida credenciais do usuário
   async validateUser(email: string, plainPassword: string) {
     const user = await this.usersService.findByEmail(email);
     if (!user || !user.passwordHash) return null;
@@ -21,8 +21,7 @@ export class AuthService {
     );
     if (!isPasswordValid) return null;
 
-    // não retornar o hash
-    const { passwordHash, ...result } = user.toObject();
+    const { passwordHash, ...result } = user as any;
     return result;
   }
 

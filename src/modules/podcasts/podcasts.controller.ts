@@ -1,5 +1,5 @@
 import { Controller, Get, Post } from '@nestjs/common';
-import { PodcastsService } from './podcasts.service';
+import { PodcastsService } from './domain/podcasts.service';
 
 @Controller('podcasts')
 export class PodcastsController {
