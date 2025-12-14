@@ -16,4 +16,8 @@ export class ReviewsMongooseRepository implements ReviewsRepository {
     const createdReview = new this.reviewModel(data);
     return createdReview.save();
   }
+
+  async update(id: string, data: any) {
+    return this.reviewModel.findByIdAndUpdate(id, data, { new: true }).exec();
+  }
 }

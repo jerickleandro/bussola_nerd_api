@@ -15,4 +15,8 @@ export class ReviewsService {
   async create(payload: any) {
     return this.reviewsRepository.create(payload);
   }
+
+  async update(id: string, payload: any) {
+    return this.reviewsRepository.update(id, payload);
+  }
 }
