@@ -12,4 +12,15 @@ export interface UsersRepository {
     passwordHash: string;
     role: string;
   }): Promise<User>;
+  update(
+    id: string,
+    updateData: Partial<{
+      name: string;
+      email: string;
+      role: string;
+      avatarUrl: string;
+      bio: string;
+      active: boolean;
+    }>,
+  ): Promise<User | null>;
 }

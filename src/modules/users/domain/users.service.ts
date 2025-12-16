@@ -49,4 +49,12 @@ export class UsersService {
       passwordHash,
     });
   }
+
+  async update(id: string, updateData: Partial<{ name: string; email: string; role: string; avatarUrl: string; bio: string; active: boolean; }>) {
+    return this.usersRepository.update(id, updateData);
+  }
+
+  async remove(id: string) {
+    return this.usersRepository.update(id, { active: false });
+  }
 }

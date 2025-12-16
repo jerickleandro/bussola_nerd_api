@@ -30,4 +30,21 @@ export class UsersMongooseRepository implements UsersRepository {
     const created = new this.userModel(data);
     return created.save();
   }
+
+  async update(
+    id: string,
+    updateData: Partial<{
+      name: string;
+      email: string;
+      role: string;
+      avatarUrl: string;
+      bio: string;
+      active: boolean;
+    }>,
+  ): Promise<User | null> {
+    return this.userModel
+      .findByIdAndUpdate(id, updateData, { new: true })
+      .lean()
+      .exec();
+  }
 }
