@@ -10,4 +10,5 @@ export interface CategoriesRepository {
   findAll(): Promise<any[]>; 
   findById(id: string): Promise<any>;
   update(id: string, data: Partial<CreateCategoryInput>): Promise<any>;
+  deactivate(id: string, data: Partial<{ isActive: boolean }>): Promise<any>;
 }

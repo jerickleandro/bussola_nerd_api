@@ -24,4 +24,12 @@ export class CategoriesService {
   async update(id: string, payload: any) {
     return this.categoriesRepository.update(id, payload);
   }
+
+  async remove(id: string) {
+    const category = await this.categoriesRepository.findById(id);
+    if (category) {
+      await this.categoriesRepository.deactivate(id, { isActive: false });
+    }
+    return category;
+  }
 }

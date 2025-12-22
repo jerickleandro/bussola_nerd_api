@@ -8,6 +8,9 @@ export class Categorie {
 
   @Prop({ required: true, unique: true })
   slug: string;
+
+  @Prop({ default: true })
+  isActive: boolean;
 }
 
 export type CategorieDocument = Categorie & Document;

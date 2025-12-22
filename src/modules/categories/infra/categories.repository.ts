@@ -27,4 +27,11 @@ export class CategoriesMongooseRepository implements CategoriesRepository {
       .lean()
       .exec();
   }
+
+  deactivate(id: string, data: Partial<{ isActive: boolean; }>): Promise<any> {
+    return this.categorieModel
+      .findByIdAndUpdate(id, data, { new: true })
+      .lean()
+      .exec();
+  }
 }
