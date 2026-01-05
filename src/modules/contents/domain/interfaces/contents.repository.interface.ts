@@ -1,3 +1,5 @@
+import { FindContentsQueryDto } from "../../dto/find-contents.query.dto";
+
 export const CONTENTS_REPOSITORY = 'CONTENTS_REPOSITORY';
 
 export type ContentType = 'NEWS' | 'ARTICLE';
@@ -22,7 +24,7 @@ export interface CreateContentInput {
 }
 
 export interface ContentsRepository {
-  findAll(): Promise<any[]>;
+  findAll(query?: FindContentsQueryDto): Promise<any[]>;
   findBySlug(slug: string): Promise<any | null>;
   create(data: CreateContentInput): Promise<any>;
   update(slug: string, data: Partial<CreateContentInput>): Promise<any>;

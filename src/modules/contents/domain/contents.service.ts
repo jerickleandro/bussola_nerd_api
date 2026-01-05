@@ -4,6 +4,7 @@ import type {
   ContentsRepository,
   CreateContentInput,
 } from './interfaces/contents.repository.interface';
+import { FindContentsQueryDto } from '../dto/find-contents.query.dto';
 
 @Injectable()
 export class ContentsService {
@@ -12,8 +13,8 @@ export class ContentsService {
     private readonly contentsRepository: ContentsRepository,
   ) {}
 
-  async findAll() {
-    return this.contentsRepository.findAll();
+  async findAll(query?: FindContentsQueryDto) {
+    return this.contentsRepository.findAll(query);
   }
 
   async findBySlug(slug: string) {

@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { ContentsService } from './domain/contents.service';
 import { CreateContentDto } from './dto/create-content.dto';
 import { UpdateContentDto } from './dto/update-content.dto';
 import { Role } from '../../common/enums/role.enum';
 import { Public } from '../../common/decorators/public.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { FindContentsQueryDto } from './dto/find-contents.query.dto';
 
 @Controller('contents')
 export class ContentsController {
@@ -12,8 +13,8 @@ export class ContentsController {
 
   @Public()
   @Get()
-  findAll() {
-    return this.contentsService.findAll();
+  findAll(@Query() query?: FindContentsQueryDto) {
+    return this.contentsService.findAll(query);
   }
 
   @Public()

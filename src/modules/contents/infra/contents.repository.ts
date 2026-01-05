@@ -5,6 +5,7 @@ import {
   CreateContentInput,
 } from '../domain/interfaces/contents.repository.interface';
 import { Content, ContentDocument } from './schemas/content.schema';
+import { FindContentsQueryDto } from '../dto/find-contents.query.dto';
 
 export class ContentsMongooseRepository implements ContentsRepository {
   constructor(
@@ -12,7 +13,23 @@ export class ContentsMongooseRepository implements ContentsRepository {
     private readonly contentModel: Model<ContentDocument>,
   ) {}
 
-  async findAll(): Promise<Content[]> {
+  async findAll(query: FindContentsQueryDto = {}): Promise<Content[]> {
+    if(Object.keys(query).length) {
+      const mongooseQuery: any = {};
+      if (query.type) {
+        mongooseQuery.type = query.type;
+      }
+      if (query.category) {
+        mongooseQuery.category = query.category;
+      }
+      if (query.limit) {
+        mongooseQuery.limit = query.limit;
+      }
+      if( query.page) {
+        mongooseQuery.page = query.page;
+      }
+      return this.contentModel.find(mongooseQuery).lean().exec();
+    }
     return this.contentModel.find().lean().exec();
   }
 
