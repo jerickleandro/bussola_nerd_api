@@ -14,23 +14,28 @@ export class ContentsMongooseRepository implements ContentsRepository {
   ) {}
 
   async findAll(query: FindContentsQueryDto = {}): Promise<Content[]> {
-    if(Object.keys(query).length) {
-      const mongooseQuery: any = {};
-      if (query.type) {
-        mongooseQuery.type = query.type;
-      }
-      if (query.category) {
-        mongooseQuery.category = query.category;
-      }
-      if (query.limit) {
-        mongooseQuery.limit = query.limit;
-      }
-      if( query.page) {
-        mongooseQuery.page = query.page;
-      }
-      return this.contentModel.find(mongooseQuery).lean().exec();
+    const filter: any = {};
+
+    if (query.type) {
+      filter.type = query.type;
     }
-    return this.contentModel.find().lean().exec();
+
+    if (query.category) {
+      filter.categoryId = query.category;
+    }
+
+    // Regras (page começa em 1)
+    const limit = Math.min(Math.max(query.limit ?? 20, 1), 50);
+    const page = Math.max(query.page ?? 1, 1); 
+    const skip = (page - 1) * limit;
+
+    return this.contentModel
+      .find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean()
+      .exec();
   }
 
   async findBySlug(slug: string): Promise<Content | null> {
