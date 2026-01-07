@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ContentsService } from './domain/contents.service';
 import { CreateContentDto } from './dto/create-content.dto';
 import { UpdateContentDto } from './dto/update-content.dto';
@@ -39,5 +48,16 @@ export class ContentsController {
       ...body,
       publishedAt: body.publishedAt ? new Date(body.publishedAt) : undefined,
     });
+  }
+
+  @Roles(Role.ADMIN, Role.EDITOR)
+  @Delete(':id')
+  async delete(@Param('id') id: string) {
+    const content = await this.contentsService.findById(id);
+    if (!content) {
+      return { message: 'Content not found' };
+    }
+    await this.contentsService.delete(id);
+    return { message: 'Content deleted successfully' };
   }
 }

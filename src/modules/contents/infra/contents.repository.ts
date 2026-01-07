@@ -26,7 +26,7 @@ export class ContentsMongooseRepository implements ContentsRepository {
 
     // Regras (page começa em 1)
     const limit = Math.min(Math.max(query.limit ?? 20, 1), 50);
-    const page = Math.max(query.page ?? 1, 1); 
+    const page = Math.max(query.page ?? 1, 1);
     const skip = (page - 1) * limit;
 
     return this.contentModel
@@ -42,6 +42,10 @@ export class ContentsMongooseRepository implements ContentsRepository {
     return this.contentModel.findOne({ slug }).lean().exec();
   }
 
+  async findById(id: string): Promise<Content | null> {
+    return this.contentModel.findById(id).lean().exec();
+  }
+
   async create(data: CreateContentInput): Promise<Content> {
     const created = new this.contentModel(data);
     return created.save();
@@ -55,5 +59,9 @@ export class ContentsMongooseRepository implements ContentsRepository {
       .findOneAndUpdate({ slug }, data, { new: true })
       .lean()
       .exec();
+  }
+
+  async delete(id: string): Promise<Content | null> {
+    return this.contentModel.findOneAndDelete({ _id: id }).lean().exec();
   }
 }

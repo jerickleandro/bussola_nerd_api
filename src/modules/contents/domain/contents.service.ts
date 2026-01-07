@@ -21,6 +21,10 @@ export class ContentsService {
     return this.contentsRepository.findBySlug(slug);
   }
 
+  async findById(id: string) {
+    return this.contentsRepository.findById(id);
+  }
+
   async create(payload: CreateContentInput) {
     const type = payload.type ?? 'NEWS';
     payload.type = type;
@@ -32,10 +36,22 @@ export class ContentsService {
     return this.contentsRepository.create(payload);
   }
 
-  async update(slug: string, payload: Partial<CreateContentInput>, publishedAt?: Date) {
+  async update(
+    slug: string,
+    payload: Partial<CreateContentInput>,
+    publishedAt?: Date,
+  ) {
     if (publishedAt) {
       payload.publishedAt = publishedAt;
     }
     return this.contentsRepository.update(slug, payload);
+  }
+
+  async delete(id: string) {
+    const content = await this.contentsRepository.findById(id);
+    if (!content) {
+      return null;
+    }
+    return this.contentsRepository.delete(id);
   }
 }
