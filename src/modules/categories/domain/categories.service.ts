@@ -17,6 +17,10 @@ export class CategoriesService {
     return this.categoriesRepository.findById(id);
   }
 
+  async findBySlug(slug: string) {
+    return this.categoriesRepository.findBySlug(slug);
+  }
+
   async create(payload: any) {
     return this.categoriesRepository.create(payload);
   }

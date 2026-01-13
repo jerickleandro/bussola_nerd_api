@@ -9,7 +9,11 @@ export enum ContentTypeQuery {
 export class FindContentsQueryDto {
   @IsOptional()
   @IsString()
-  category?: string; // slug da categoria
+  categories?: string;
+
+  @IsOptional()
+  @IsString()
+  category?: string;
 
   @IsOptional()
   @IsEnum(ContentTypeQuery)

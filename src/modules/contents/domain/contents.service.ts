@@ -5,16 +5,30 @@ import type {
   CreateContentInput,
 } from './interfaces/contents.repository.interface';
 import { FindContentsQueryDto } from '../dto/find-contents.query.dto';
+import { CategoriesService } from '../../categories/domain/categories.service';
 
 @Injectable()
 export class ContentsService {
   constructor(
     @Inject(CONTENTS_REPOSITORY)
     private readonly contentsRepository: ContentsRepository,
+    private readonly categoriesService: CategoriesService,
   ) {}
 
-  async findAll(query?: FindContentsQueryDto) {
-    return this.contentsRepository.findAll(query);
+  async findAll(query: FindContentsQueryDto = {}) {
+    const categorySlug = query.categories?.trim();
+    const repoQuery: any = { ...query };
+
+    if (categorySlug) {
+      const category = await this.categoriesService.findBySlug(categorySlug);
+      if (!category || category.isActive === false) {
+        return [];
+      }
+      repoQuery.category = category._id.toString();
+    }
+
+    delete repoQuery.categories;
+    return this.contentsRepository.findAll(repoQuery);
   }
 
   async findBySlug(slug: string) {

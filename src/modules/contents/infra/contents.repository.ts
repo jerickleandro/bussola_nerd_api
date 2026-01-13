@@ -24,6 +24,7 @@ export class ContentsMongooseRepository implements ContentsRepository {
       filter.categoryId = query.category;
     }
 
+
     // Regras (page começa em 1)
     const limit = Math.min(Math.max(query.limit ?? 20, 1), 50);
     const page = Math.max(query.page ?? 1, 1);

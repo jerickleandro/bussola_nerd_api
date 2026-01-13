@@ -21,6 +21,9 @@ export class CategoriesMongooseRepository implements CategoriesRepository {
   findById(id: string): Promise<any> {
     return this.categorieModel.findById(id).lean().exec();
   }
+  findBySlug(slug: string): Promise<any | null> {
+    return this.categorieModel.findOne({ slug }).lean().exec();
+  }
   update(id: string, data: Partial<CreateCategoryInput>): Promise<any> {
     return this.categorieModel
       .findByIdAndUpdate(id, data, { new: true })
@@ -28,7 +31,7 @@ export class CategoriesMongooseRepository implements CategoriesRepository {
       .exec();
   }
 
-  deactivate(id: string, data: Partial<{ isActive: boolean; }>): Promise<any> {
+  deactivate(id: string, data: Partial<{ isActive: boolean }>): Promise<any> {
     return this.categorieModel
       .findByIdAndUpdate(id, data, { new: true })
       .lean()

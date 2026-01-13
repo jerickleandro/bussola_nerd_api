@@ -5,10 +5,13 @@ import { ContentsService } from './domain/contents.service';
 import { CONTENTS_REPOSITORY } from './domain/interfaces/contents.repository.interface';
 import { ContentsMongooseRepository } from './infra/contents.repository';
 import { Content, ContentSchema } from './infra/schemas/content.schema';
+import { CategoriesService } from '../categories/domain/categories.service';
+import { CategoriesModule } from '../categories/categories.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Content.name, schema: ContentSchema }]),
+    CategoriesModule,
   ],
   controllers: [ContentsController],
   providers: [
