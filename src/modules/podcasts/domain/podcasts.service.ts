@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PODCASTS_REPOSITORY } from './interfaces/podcasts.repository.interface';
 import type { PodcastsRepository, CreatePodcastInput } from './interfaces/podcasts.repository.interface';
+import { CreatePodcastDto } from './dto/create-podcast.dto';
 
 @Injectable()
 export class PodcastsService {
@@ -13,11 +14,11 @@ export class PodcastsService {
     return this.podcastsRepository.findAll();
   }
 
-  async create(data: CreatePodcastInput): Promise<any> {
+  async create(data: CreatePodcastDto): Promise<any> {
     return this.podcastsRepository.create(data);
   }
 
-  async update(id: string, data: Partial<CreatePodcastInput>): Promise<any> {
+  async update(id: string, data: Partial<CreatePodcastDto>): Promise<any> {
     return this.podcastsRepository.update(id, data);
   }
 
