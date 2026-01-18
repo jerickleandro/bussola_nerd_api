@@ -10,11 +10,30 @@ export class PodcastsMongooseRepository implements PodcastsRepository {
   constructor(
     @InjectModel(Podcast.name)
     private readonly podcastModel: Model<PodcastDocument>,
-  ) {}
+  ) { }
 
-  findAll(): Promise<Podcast[]> {
-    return this.podcastModel.find().lean().exec();
+  findAll(query?: any): Promise<Podcast[]> {
+  const filter: any = {};
+
+  if(query.categorieId) {
+    filter.categoryId = query.categorieId;
   }
+  
+  const limit = Math.min(Math.max(Number(query.limit) || 20, 1), 50);
+  const page = Math.max(Number(query.page) || 1, 1);
+  const skip = (page - 1) * limit;
+
+  
+
+  return this.podcastModel
+    .find(filter)
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .lean()
+    .exec();
+}
+
   findById(id: string): Promise<Podcast | null> {
     return this.podcastModel.findById(id).lean().exec();
   }

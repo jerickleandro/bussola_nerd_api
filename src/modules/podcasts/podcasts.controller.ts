@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { PodcastsService } from './domain/podcasts.service';
 import { CreatePodcastDto } from './domain/dto/create-podcast.dto';
 import { Public } from '../../common/decorators/public.decorator';
@@ -11,8 +11,14 @@ export class PodcastsController {
 
   @Public()
   @Get('episodes')
-  listEpisodes() {
-    return this.podcastsService.listEpisodes();
+  listEpisodes(@Query() query?: any) {
+    return this.podcastsService.listEpisodes(query);
+  }
+
+  @Public()
+  @Get(':id')
+  findById(@Param('id') id: string) {
+    return this.podcastsService.findById(id);
   }
 
   @Roles(Role.EDITOR, Role.ADMIN)

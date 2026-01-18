@@ -8,10 +8,18 @@ export class PodcastsService {
   constructor(
     @Inject(PODCASTS_REPOSITORY)
     private readonly podcastsRepository: PodcastsRepository,
-  ) {}
+  ) { }
 
-  async listEpisodes(): Promise<any[]> {
-    return this.podcastsRepository.findAll();
+  async listEpisodes(query?: any): Promise<any[]> {
+    if (query?.categories) {
+      query.categoryId = query.categories;
+      delete query.categories;
+    }
+    return this.podcastsRepository.findAll(query);
+  }
+
+  async findById(id: string): Promise<any> {
+    return this.podcastsRepository.findById(id);
   }
 
   async create(data: CreatePodcastDto): Promise<any> {

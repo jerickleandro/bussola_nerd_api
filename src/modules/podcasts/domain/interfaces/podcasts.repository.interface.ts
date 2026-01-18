@@ -17,7 +17,7 @@ export interface CreatePodcastInput {
 export const PODCASTS_REPOSITORY = 'PODCASTS_REPOSITORY';
 
 export interface PodcastsRepository {
-  findAll(): Promise<Podcast[]>;
+  findAll(query?: any): Promise<Podcast[]>;
   findById(id: string): Promise<Podcast | null>;
   create(data: CreatePodcastDto): Promise<Podcast>;
   update(id: string, data: Partial<CreatePodcastDto>): Promise<Podcast | null>;
