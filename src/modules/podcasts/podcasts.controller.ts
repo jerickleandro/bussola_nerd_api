@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { PodcastsService } from './domain/podcasts.service';
 import { CreatePodcastDto } from './domain/dto/create-podcast.dto';
 import { Public } from '../../common/decorators/public.decorator';
@@ -7,7 +7,7 @@ import { Role } from '../../common/enums/role.enum';
 
 @Controller('podcasts')
 export class PodcastsController {
-  constructor(private readonly podcastsService: PodcastsService) {}
+  constructor(private readonly podcastsService: PodcastsService) { }
 
   @Public()
   @Get('episodes')
@@ -21,11 +21,15 @@ export class PodcastsController {
     return this.podcastsService.create(body);
   }
 
-  // @Roles(Role.EDITOR, Role.ADMIN)
-  // @Patch('update/:id')
-  // update(@Body() body: Partial<CreatePodcastDto>, ) {
-  //   const id = body.id;
-  //   delete body.id;
-  //   return this.podcastsService.update(id, body);
-  // }
+  @Roles(Role.EDITOR, Role.ADMIN)
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() body: Partial<CreatePodcastDto>) {
+    return this.podcastsService.update(id, body);
+  }
+
+  @Roles(Role.EDITOR, Role.ADMIN)
+  @Delete(':id')
+  delete(@Param('id') id: string) {
+    return this.podcastsService.delete(id);
+  }
 }
