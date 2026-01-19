@@ -49,6 +49,12 @@ export class Review {
 
   @Prop({ required: true })
   review: string;
+
+  @Prop()
+  urlPodcastEpisode?: string;
+
+  @Prop()
+  urlIdPodcastEpisode?: string;
 }
 
 export type ReviewDocument = Review & Document;

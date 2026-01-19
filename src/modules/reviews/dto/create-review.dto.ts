@@ -1,5 +1,4 @@
-import { Optional } from "@nestjs/common";
-import { IsArray, IsIn, IsNumber, IsString } from "class-validator";
+import { IsArray, IsIn, IsNumber, IsOptional, IsString } from "class-validator";
 
 type Scores = {
     score: number;
@@ -7,7 +6,7 @@ type Scores = {
 }
 
 export class CreateReviewDto {
-    
+
     @IsString()
     title: string;
 
@@ -31,23 +30,31 @@ export class CreateReviewDto {
     @IsString()
     synopsis: string;
 
-    @Optional()
+    @IsOptional()
     @IsArray()
     @IsString({ each: true })
-    cast: string[];
+    cast?: string[];
 
-    @Optional()
+    @IsOptional()
     @IsString()
     director?: string;
 
-    @Optional()
+    @IsOptional()
     @IsString()
     author?: string;
 
-    @Optional()
+    @IsOptional()
     @IsString()
     publisher?: string;
 
     @IsString()
-    review: string; 
+    review: string;
+
+    @IsOptional()
+    @IsString()
+    urlPodcastEpisode?: string;
+
+    @IsOptional()
+    @IsString()
+    urlIdPodcastEpisode?: string;
 }
