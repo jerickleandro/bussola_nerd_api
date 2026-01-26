@@ -15,14 +15,17 @@ export class PodcastsMongooseRepository implements PodcastsRepository {
   findAll(query?: any): Promise<Podcast[]> {
   const filter: any = {};
 
-  if(query.categorieId) {
+  if(query.categorieId !== undefined) {
     filter.categoryId = query.categorieId;
+  }
+
+  if(query.categoryId !== undefined) {
+    filter.categoryId = query.categoryId;
   }
   
   const limit = Math.min(Math.max(Number(query.limit) || 20, 1), 50);
   const page = Math.max(Number(query.page) || 1, 1);
   const skip = (page - 1) * limit;
-
   
 
   return this.podcastModel

@@ -11,10 +11,11 @@ export class PodcastsService {
   ) { }
 
   async listEpisodes(query?: any): Promise<any[]> {
-    if (query?.categories) {
+    if (query?.categories !== undefined) {
       query.categoryId = query.categories;
       delete query.categories;
     }
+    
     return this.podcastsRepository.findAll(query);
   }
 

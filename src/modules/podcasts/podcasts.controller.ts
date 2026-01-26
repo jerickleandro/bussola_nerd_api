@@ -4,6 +4,7 @@ import { CreatePodcastDto } from './domain/dto/create-podcast.dto';
 import { Public } from '../../common/decorators/public.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '../../common/enums/role.enum';
+import { FindPodcastDto } from './domain/dto/find-podcast.dto';
 
 @Controller('podcasts')
 export class PodcastsController {
@@ -11,7 +12,7 @@ export class PodcastsController {
 
   @Public()
   @Get('episodes')
-  listEpisodes(@Query() query?: any) {
+  listEpisodes(@Query() query?: FindPodcastDto) {
     return this.podcastsService.listEpisodes(query);
   }
 
