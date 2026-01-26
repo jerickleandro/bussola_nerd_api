@@ -1,60 +1,60 @@
-import { IsArray, IsIn, IsNumber, IsOptional, IsString } from "class-validator";
+import { ArrayMinSize, IsArray, IsIn, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { ScoreDto } from './score-review.dto';
+import { Type } from 'class-transformer';
 
-type Scores = {
-    score: number;
-    userId: string;
-}
 
 export class CreateReviewDto {
+  @IsString()
+  title: string;
 
-    @IsString()
-    title: string;
+  @IsArray()
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => ScoreDto)
+  scores: ScoreDto[];
 
-    @IsArray()
-    scores: Scores[];
+  @IsIn(['FILME', 'SERIE', 'GAME', 'LIVRO'])
+  type: 'FILME' | 'SERIE' | 'GAME' | 'LIVRO';
 
-    @IsIn(['FILME', 'SERIE', 'GAME', 'LIVRO'])
-    type: 'FILME' | 'SERIE' | 'GAME' | 'LIVRO';
+  @IsNumber()
+  year: number;
 
-    @IsNumber()
-    year: number;
+  @IsArray()
+  @IsString({ each: true })
+  genres: string[];
 
-    @IsArray()
-    @IsString({ each: true })
-    genres: string[];
+  @IsArray()
+  @IsString({ each: true })
+  platforms: string[];
 
-    @IsArray()
-    @IsString({ each: true })
-    platforms: string[];
+  @IsString()
+  synopsis: string;
 
-    @IsString()
-    synopsis: string;
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  cast?: string[];
 
-    @IsOptional()
-    @IsArray()
-    @IsString({ each: true })
-    cast?: string[];
+  @IsOptional()
+  @IsString()
+  director?: string;
 
-    @IsOptional()
-    @IsString()
-    director?: string;
+  @IsOptional()
+  @IsString()
+  author?: string;
 
-    @IsOptional()
-    @IsString()
-    author?: string;
+  @IsOptional()
+  @IsString()
+  publisher?: string;
 
-    @IsOptional()
-    @IsString()
-    publisher?: string;
+  @IsString()
+  review: string;
 
-    @IsString()
-    review: string;
+  @IsOptional()
+  @IsString()
+  urlPodcastEpisode?: string;
 
-    @IsOptional()
-    @IsString()
-    urlPodcastEpisode?: string;
-
-    @IsOptional()
-    @IsString()
-    urlIdPodcastEpisode?: string;
+  @IsOptional()
+  @IsString()
+  urlIdPodcastEpisode?: string;
 }
