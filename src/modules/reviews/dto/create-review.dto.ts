@@ -30,6 +30,10 @@ export class CreateReviewDto {
   @IsString()
   synopsis: string;
 
+  @IsArray()
+  @IsString({ each: true })
+  reviewer: string[];
+
   @IsOptional()
   @IsArray()
   @IsString({ each: true })

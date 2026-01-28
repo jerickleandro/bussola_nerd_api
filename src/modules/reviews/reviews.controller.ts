@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Put, Patch, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Put,
+  Patch,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { ReviewsService } from './domain/reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -13,6 +22,13 @@ export class ReviewsController {
   @Get()
   findAll() {
     return this.reviewsService.findAll();
+  }
+
+  @Public()
+  @Get('/reviewer')
+  findByReviewer(@Query('reviewer') reviewerId: string | string[]) {
+    const ids = Array.isArray(reviewerId) ? reviewerId : [reviewerId];
+    return this.reviewsService.findByReviewer(ids);
   }
 
   @Roles(Role.EDITOR, Role.ADMIN)
