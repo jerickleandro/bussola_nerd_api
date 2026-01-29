@@ -7,6 +7,7 @@ import {
   Patch,
   Param,
   Query,
+  Delete,
 } from '@nestjs/common';
 import { ReviewsService } from './domain/reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
@@ -41,5 +42,11 @@ export class ReviewsController {
   @Patch(':id')
   update(@Body() body: Partial<CreateReviewDto>, @Param('id') id: string) {
     return this.reviewsService.update(id, body);
+  }
+
+  @Roles(Role.EDITOR, Role.ADMIN)
+  @Delete(':id')
+  delete(@Param('id') id: string) {
+    return this.reviewsService.delete(id);
   }
 }

@@ -25,4 +25,8 @@ export class ReviewsMongooseRepository implements ReviewsRepository {
   async update(id: string, data: any) {
     return this.reviewModel.findByIdAndUpdate(id, data, { new: true }).exec();
   }
+
+  async delete(id: string): Promise<void> {
+    await this.reviewModel.findByIdAndDelete(id).exec();
+  }
 }

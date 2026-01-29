@@ -39,6 +39,27 @@ export class ReviewsService {
   }
 
   async update(id: string, payload: any) {
+    if(payload.reviewer) {
+      for(const userId of payload.reviewer) {
+        const user = await this.usersService.findById(userId);
+        if(!user) {
+          throw new NotFoundException(`User with id ${userId} not found`)
+        }
+      }
+    }
+    if(payload.scores) {
+      for(const score of payload.scores) {
+        const userId = score.userId.toString();
+        const user = await this.usersService.findById(userId);
+        if(!user) {
+          throw new NotFoundException(`User with id ${userId} not found`)
+        }
+      }
+    }
     return this.reviewsRepository.update(id, payload);
+  }
+
+  async delete(id: string) {
+    return this.reviewsRepository.delete(id);
   }
 }
