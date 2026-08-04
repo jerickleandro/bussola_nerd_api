@@ -5,7 +5,7 @@ import type { ReviewsRepository } from './interfaces/reviews.repository.interfac
 @Injectable()
 export class ReviewsService {
   constructor(
-    @Inject(REVIEWS_REPOSITORY)   
+    @Inject(REVIEWS_REPOSITORY)
     private readonly reviewsRepository: ReviewsRepository,
   ) {}
   async findAll() {

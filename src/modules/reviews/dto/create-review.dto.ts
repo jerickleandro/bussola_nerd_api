@@ -1,7 +1,14 @@
-import { ArrayMinSize, IsArray, IsIn, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  ArrayMinSize,
+  IsArray,
+  IsIn,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { ScoreDto } from './score-review.dto';
 import { Type } from 'class-transformer';
-
 
 export class CreateReviewDto {
   @IsString()

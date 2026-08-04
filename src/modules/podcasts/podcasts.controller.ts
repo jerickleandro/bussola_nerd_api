@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { PodcastsService } from './domain/podcasts.service';
 import { CreatePodcastDto } from './domain/dto/create-podcast.dto';
 import { Public } from '../../common/decorators/public.decorator';
@@ -8,7 +17,7 @@ import { FindPodcastDto } from './domain/dto/find-podcast.dto';
 
 @Controller('podcasts')
 export class PodcastsController {
-  constructor(private readonly podcastsService: PodcastsService) { }
+  constructor(private readonly podcastsService: PodcastsService) {}
 
   @Public()
   @Get('episodes')

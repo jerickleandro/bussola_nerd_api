@@ -1,5 +1,5 @@
-import { Podcast } from "../../infra/schemas/podcast.schema";
-import { CreatePodcastDto } from "../dto/create-podcast.dto";
+import { Podcast } from '../../infra/schemas/podcast.schema';
+import { CreatePodcastDto } from '../dto/create-podcast.dto';
 
 export interface CreatePodcastInput {
   title: string;

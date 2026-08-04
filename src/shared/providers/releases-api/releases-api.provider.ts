@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  ReleasesApiProvider
-} from './releases-api.provider.interface';
+import { ReleasesApiProvider } from './releases-api.provider.interface';
 
 @Injectable()
 export class HttpReleasesApiProvider implements ReleasesApiProvider {

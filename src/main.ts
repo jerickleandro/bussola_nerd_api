@@ -13,15 +13,15 @@ async function bootstrap() {
   app.setGlobalPrefix(apiPrefix);
   app.enableCors({
     origin: true,
-    credentials: true
+    credentials: true,
   });
 
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
-      transform: true
-    })
+      transform: true,
+    }),
   );
 
   await app.listen(port);

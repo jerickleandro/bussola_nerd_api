@@ -6,10 +6,7 @@ export class ReleasesController {
   constructor(private readonly releasesService: ReleasesService) {}
 
   @Get()
-  listByMonth(
-    @Query('year') year: number,
-    @Query('month') month: number
-  ) {
+  listByMonth(@Query('year') year: number, @Query('month') month: number) {
     return this.releasesService.listByMonth(Number(year), Number(month));
   }
 

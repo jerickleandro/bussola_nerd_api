@@ -1,6 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PODCASTS_REPOSITORY } from './interfaces/podcasts.repository.interface';
-import type { PodcastsRepository, CreatePodcastInput } from './interfaces/podcasts.repository.interface';
+import type {
+  PodcastsRepository,
+  CreatePodcastInput,
+} from './interfaces/podcasts.repository.interface';
 import { CreatePodcastDto } from './dto/create-podcast.dto';
 
 @Injectable()
@@ -8,14 +11,14 @@ export class PodcastsService {
   constructor(
     @Inject(PODCASTS_REPOSITORY)
     private readonly podcastsRepository: PodcastsRepository,
-  ) { }
+  ) {}
 
   async listEpisodes(query?: any): Promise<any[]> {
     if (query?.categories !== undefined) {
       query.categoryId = query.categories;
       delete query.categories;
     }
-    
+
     return this.podcastsRepository.findAll(query);
   }
 

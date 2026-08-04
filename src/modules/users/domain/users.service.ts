@@ -50,7 +50,17 @@ export class UsersService {
     });
   }
 
-  async update(id: string, updateData: Partial<{ name: string; email: string; role: string; avatarUrl: string; bio: string; active: boolean; }>) {
+  async update(
+    id: string,
+    updateData: Partial<{
+      name: string;
+      email: string;
+      role: string;
+      avatarUrl: string;
+      bio: string;
+      active: boolean;
+    }>,
+  ) {
     return this.usersRepository.update(id, updateData);
   }
 

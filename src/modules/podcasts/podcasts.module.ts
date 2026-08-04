@@ -20,8 +20,8 @@ import { PODCASTS_REPOSITORY } from './domain/interfaces/podcasts.repository.int
     {
       provide: PODCASTS_REPOSITORY,
       useClass: PodcastsMongooseRepository,
-    }
+    },
   ],
-  exports: [PodcastsService]
+  exports: [PodcastsService],
 })
 export class PodcastsModule {}
