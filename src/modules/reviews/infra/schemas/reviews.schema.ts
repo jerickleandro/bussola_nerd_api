@@ -35,6 +35,9 @@ export class Review {
   @Prop({ required: true })
   synopsis: string;
 
+  @Prop({ required: true, type: [String], default: [] })
+  reviewer: string[];
+
   @Prop({ type: [String], default: [] })
   cast?: string[];
 

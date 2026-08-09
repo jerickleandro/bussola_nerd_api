@@ -5,10 +5,12 @@ import { REVIEWS_REPOSITORY } from './domain/interfaces/reviews.repository.inter
 import { Review, ReviewSchema } from './infra/schemas/reviews.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ReviewsMongooseRepository } from './infra/reviews.repository';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Review.name, schema: ReviewSchema }]),
+    UsersModule,
   ],
   controllers: [ReviewsController],
   providers: [
