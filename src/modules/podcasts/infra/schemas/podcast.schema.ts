@@ -16,7 +16,10 @@ export class Podcast {
   categoryId?: string;
 
   @Prop()
-  converImageUrl?: string;
+  coverImageUrl?: string;
+
+  @Prop()
+  audioUrl?: string;
 
   @Prop({ unique: true })
   spotifyId?: string;

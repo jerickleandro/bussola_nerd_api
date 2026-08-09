@@ -39,6 +39,10 @@ export class PodcastsMongooseRepository implements PodcastsRepository {
   findById(id: string): Promise<Podcast | null> {
     return this.podcastModel.findById(id).lean().exec();
   }
+
+  findBySpotifyId(spotifyId: string): Promise<Podcast | null> {
+    return this.podcastModel.findOne({ spotifyId }).lean().exec();
+  }
   create(data: CreatePodcastInput): Promise<Podcast> {
     const created = new this.podcastModel(data);
     return created.save();

@@ -4,4 +4,6 @@ export const spotifyConfig = registerAs('spotify', () => ({
   clientId: process.env.SPOTIFY_CLIENT_ID,
   clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
   showId: process.env.SPOTIFY_SHOW_ID,
+  feedUrl:
+    process.env.PODCAST_FEED_URL ?? 'https://anchor.fm/s/c64d550/podcast/rss',
 }));

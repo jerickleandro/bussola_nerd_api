@@ -25,6 +25,12 @@ export class PodcastsController {
     return this.podcastsService.listEpisodes(query);
   }
 
+  @Roles(Role.ADMIN)
+  @Post('trigger')
+  async trigger() {
+    return this.podcastsService.syncFromFeed();
+  }
+
   @Public()
   @Get(':id')
   findById(@Param('id') id: string) {

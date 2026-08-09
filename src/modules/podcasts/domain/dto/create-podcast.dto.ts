@@ -43,6 +43,10 @@ export class CreatePodcastDto {
   coverImageUrl?: string;
 
   @IsOptional()
+  @IsUrl()
+  audioUrl?: string;
+
+  @IsOptional()
   @IsString()
   spotifyId?: string;
 
