@@ -19,15 +19,19 @@ export const validationSchema = Joi.object({
   SPOTIFY_CLIENT_SECRET: Joi.string().required(),
   SPOTIFY_SHOW_ID: Joi.string().required(),
 
+  // Feed RSS do podcast (Anchor/Spotify for Podcasters)
+  PODCAST_FEED_URL: Joi.string().uri().optional(),
+
   // API externa de lançamentos
   RELEASES_API_BASE_URL: Joi.string().uri().required(),
   RELEASES_API_KEY: Joi.string().required(),
 
   // Serviço de scrap
   SCRAP_API_KEY: Joi.string().required(),
+  SCRAP_CRON: Joi.string().default('0 */12 * * *'),
 
   // LLM
   LLM_API_KEY: Joi.string().required(),
   LLM_API_BASE_URL: Joi.string().uri().required(),
-  LLM_MODEL: Joi.string().default('gpt-4.1-mini')
+  LLM_MODEL: Joi.string().default('gemini-2.0-flash'),
 });

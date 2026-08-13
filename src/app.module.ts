@@ -23,8 +23,10 @@ import { ContentsModule } from './modules/contents/contents.module';
 import { PodcastsModule } from './modules/podcasts/podcasts.module';
 import { ReviewsModule } from './modules/reviews/reviews.module';
 import { ReleasesModule } from './modules/releases/releases.module';
-import { ScheduleModule } from './modules/schedule/schedule.module';
+import { ScheduleStubModule } from './modules/schedule/schedule.module';
 import { IntegrationModule } from './modules/integration/integration.module';
+import { ScrapModule } from './modules/scrap/scrap.module';
+import { ScheduleModule } from '@nestjs/schedule';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 @Module({
@@ -38,12 +40,12 @@ import { RolesGuard } from './common/guards/roles.guard';
         spotifyConfig,
         releasesConfig,
         scrapConfig,
-        llmConfig
+        llmConfig,
       ],
       validationSchema,
       validationOptions: {
-        abortEarly: false
-      }
+        abortEarly: false,
+      },
     }),
     DatabaseModule,
     HealthModule,
@@ -54,17 +56,22 @@ import { RolesGuard } from './common/guards/roles.guard';
     PodcastsModule,
     ReviewsModule,
     ReleasesModule,
-    ScheduleModule,
-    IntegrationModule
+    ScheduleStubModule,
+    IntegrationModule,
+    ScrapModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
-  providers: [AppService,{
+  providers: [
+    AppService,
+    {
       provide: APP_GUARD,
-      useClass: JwtAuthGuard
+      useClass: JwtAuthGuard,
     },
     {
       provide: APP_GUARD,
-      useClass: RolesGuard
-    }],
+      useClass: RolesGuard,
+    },
+  ],
 })
 export class AppModule {}
