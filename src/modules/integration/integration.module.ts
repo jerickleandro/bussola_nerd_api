@@ -3,20 +3,11 @@ import { ConfigModule } from '@nestjs/config';
 import { IntegrationService } from './integration.service';
 import { IntegrationController } from './integration.controller';
 import { ContentsModule } from '../contents/contents.module';
-import {
-  LLM_PROVIDER
-} from '../../shared/providers/llm/llm.provider.interface';
-import { HttpLlmProvider } from '../../shared/providers/llm/llm.provider';
+import { LlmModule } from '../../shared/providers/llm/llm.module';
 
 @Module({
-  imports: [ConfigModule, ContentsModule],
+  imports: [ConfigModule, ContentsModule, LlmModule],
   controllers: [IntegrationController],
-  providers: [
-    IntegrationService,
-    {
-      provide: LLM_PROVIDER,
-      useClass: HttpLlmProvider
-    }
-  ]
+  providers: [IntegrationService],
 })
 export class IntegrationModule {}

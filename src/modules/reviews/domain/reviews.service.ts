@@ -22,37 +22,37 @@ export class ReviewsService {
   }
 
   async create(payload: CreateReviewDto) {
-    for(const score of payload.scores) {
+    for (const score of payload.scores) {
       const userId = score.userId.toString();
       const user = await this.usersService.findById(userId);
-      if(!user) {
-        throw new NotFoundException(`User with id ${userId} not found`)
+      if (!user) {
+        throw new NotFoundException(`User with id ${userId} not found`);
       }
     }
-    for(const userId of payload.reviewer) {
+    for (const userId of payload.reviewer) {
       const user = await this.usersService.findById(userId);
-      if(!user) {
-        throw new NotFoundException(`User with id ${userId} not found`)
+      if (!user) {
+        throw new NotFoundException(`User with id ${userId} not found`);
       }
     }
     return this.reviewsRepository.create(payload);
   }
 
   async update(id: string, payload: any) {
-    if(payload.reviewer) {
-      for(const userId of payload.reviewer) {
+    if (payload.reviewer) {
+      for (const userId of payload.reviewer) {
         const user = await this.usersService.findById(userId);
-        if(!user) {
-          throw new NotFoundException(`User with id ${userId} not found`)
+        if (!user) {
+          throw new NotFoundException(`User with id ${userId} not found`);
         }
       }
     }
-    if(payload.scores) {
-      for(const score of payload.scores) {
+    if (payload.scores) {
+      for (const score of payload.scores) {
         const userId = score.userId.toString();
         const user = await this.usersService.findById(userId);
-        if(!user) {
-          throw new NotFoundException(`User with id ${userId} not found`)
+        if (!user) {
+          throw new NotFoundException(`User with id ${userId} not found`);
         }
       }
     }

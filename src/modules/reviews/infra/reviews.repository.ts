@@ -7,15 +7,17 @@ export class ReviewsMongooseRepository implements ReviewsRepository {
   constructor(
     @InjectModel(Review.name) private reviewModel: Model<ReviewDocument>,
   ) {}
-  
+
   async findAll() {
     return this.reviewModel.find().lean().exec();
   }
 
   async findByReviewer(id: string[]): Promise<any[]> {
-    return this.reviewModel.find({ reviewer: { $in: id } }).lean().exec();
+    return this.reviewModel
+      .find({ reviewer: { $in: id } })
+      .lean()
+      .exec();
   }
-  
 
   async create(data: any) {
     const createdReview = new this.reviewModel(data);

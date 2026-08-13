@@ -30,8 +30,11 @@ export const validationSchema = Joi.object({
   SCRAP_API_KEY: Joi.string().required(),
   SCRAP_CRON: Joi.string().default('0 */12 * * *'),
 
-  // LLM
+  // LLM (AI Gateway -> OpenRouter por padrão)
+  LLM_PROVIDER: Joi.string().default('openrouter'),
   LLM_API_KEY: Joi.string().required(),
-  LLM_API_BASE_URL: Joi.string().uri().required(),
-  LLM_MODEL: Joi.string().default('gemini-2.0-flash'),
+  LLM_API_BASE_URL: Joi.string()
+    .uri()
+    .default('https://openrouter.ai/api/v1'),
+  LLM_MODEL: Joi.string().default('openai/gpt-4o-mini'),
 });

@@ -10,8 +10,7 @@ import {
   ScrapedArticleSchema,
 } from './infra/schemas/scraped-article.schema';
 import { ContentsModule } from '../contents/contents.module';
-import { LLM_PROVIDER } from '../../shared/providers/llm/llm.provider.interface';
-import { LangChainGeminiProvider } from '../../shared/providers/llm/llm.provider';
+import { LlmModule } from '../../shared/providers/llm/llm.module';
 
 @Module({
   imports: [
@@ -19,6 +18,7 @@ import { LangChainGeminiProvider } from '../../shared/providers/llm/llm.provider
       { name: ScrapedArticle.name, schema: ScrapedArticleSchema },
     ]),
     ContentsModule,
+    LlmModule,
   ],
   controllers: [ScrapController],
   providers: [
@@ -27,10 +27,6 @@ import { LangChainGeminiProvider } from '../../shared/providers/llm/llm.provider
     {
       provide: SCRAPED_ARTICLE_REPOSITORY,
       useClass: ScrapedArticleMongooseRepository,
-    },
-    {
-      provide: LLM_PROVIDER,
-      useClass: LangChainGeminiProvider,
     },
   ],
   exports: [ScrapService],

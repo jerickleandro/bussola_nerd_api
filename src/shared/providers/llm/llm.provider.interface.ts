@@ -11,3 +11,8 @@ export interface LlmProvider {
     summary: string;
   }>;
 }
+
+export interface LlmProviderRegistration {
+  name: string;
+  provider: LlmProvider;
+}

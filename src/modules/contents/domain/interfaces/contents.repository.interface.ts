@@ -27,6 +27,8 @@ export interface ContentsRepository {
   findAll(query?: FindContentsQueryDto): Promise<any[]>;
   findBySlug(slug: string): Promise<any | null>;
   findById(id: string): Promise<any | null>;
+  findByOriginalUrl(url: string): Promise<any | null>;
+  findByTitlePattern(pattern: string): Promise<any | null>;
   create(data: CreateContentInput): Promise<any>;
   update(slug: string, data: Partial<CreateContentInput>): Promise<any>;
   delete(id: string): Promise<any>;
