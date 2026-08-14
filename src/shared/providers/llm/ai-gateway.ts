@@ -1,9 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  LlmProvider,
-  LlmProviderRegistration,
-} from './llm.provider.interface';
+import { LlmProvider, LlmProviderRegistration } from './llm.provider.interface';
 
 @Injectable()
 export class AiGateway implements LlmProvider {
@@ -20,9 +17,9 @@ export class AiGateway implements LlmProvider {
     const active = this.providers.find((p) => p.name === activeName);
     if (!active) {
       throw new Error(
-        `AI Gateway: provider "${activeName}" is not registered. Available: ${this.providers
-          .map((p) => p.name)
-          .join(', ') || 'none'}`,
+        `AI Gateway: provider "${activeName}" is not registered. Available: ${
+          this.providers.map((p) => p.name).join(', ') || 'none'
+        }`,
       );
     }
 
@@ -36,10 +33,14 @@ export class AiGateway implements LlmProvider {
     sourceLanguage: string;
     targetLanguage: string;
     maxSummaryChars?: number;
+    categories?: { id: string; name: string; slug: string }[];
+    tagTopics?: string[];
   }): Promise<{
     translatedTitle: string;
     translatedText: string;
     summary: string;
+    categorySlug?: string;
+    tags?: string[];
   }> {
     return this.activeProvider.translateAndSummarize(input);
   }

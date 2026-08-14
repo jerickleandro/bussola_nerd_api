@@ -10,6 +10,7 @@ import {
   ScrapedArticleSchema,
 } from './infra/schemas/scraped-article.schema';
 import { ContentsModule } from '../contents/contents.module';
+import { CategoriesModule } from '../categories/categories.module';
 import { LlmModule } from '../../shared/providers/llm/llm.module';
 
 @Module({
@@ -18,6 +19,7 @@ import { LlmModule } from '../../shared/providers/llm/llm.module';
       { name: ScrapedArticle.name, schema: ScrapedArticleSchema },
     ]),
     ContentsModule,
+    CategoriesModule,
     LlmModule,
   ],
   controllers: [ScrapController],

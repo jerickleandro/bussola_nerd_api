@@ -33,8 +33,7 @@ export const validationSchema = Joi.object({
   // LLM (AI Gateway -> OpenRouter por padrão)
   LLM_PROVIDER: Joi.string().default('openrouter'),
   LLM_API_KEY: Joi.string().required(),
-  LLM_API_BASE_URL: Joi.string()
-    .uri()
-    .default('https://openrouter.ai/api/v1'),
+  LLM_API_BASE_URL: Joi.string().uri().default('https://openrouter.ai/api/v1'),
   LLM_MODEL: Joi.string().default('openai/gpt-4o-mini'),
+  LLM_MAX_TOKENS: Joi.number().default(1024),
 });

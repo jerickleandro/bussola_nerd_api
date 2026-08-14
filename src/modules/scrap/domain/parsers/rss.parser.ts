@@ -44,7 +44,8 @@ export class RssParser implements ContentParser {
         body = contentEncoded || description;
       }
 
-      if (!title || !link || !body) {
+      const strippedBody = this.stripHtml(body);
+      if (!title || !link || !strippedBody) {
         return;
       }
 
@@ -58,7 +59,7 @@ export class RssParser implements ContentParser {
       articles.push({
         title,
         url: link,
-        body: this.stripHtml(body),
+        body: strippedBody,
         sourceName,
         guid,
         imageUrl: this.extractImage($, element, body),

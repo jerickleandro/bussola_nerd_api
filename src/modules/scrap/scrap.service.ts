@@ -12,11 +12,18 @@ import type {
   ParsedArticleWithSummary,
 } from './domain/parsers/parser.interface';
 import { ScrapPortal } from '../../config/scrap.config';
+import { CategoriesService } from '../categories/domain/categories.service';
+
+interface FetchedArticle {
+  article: ParsedArticle;
+  scrapedArticleId: string;
+}
 
 @Injectable()
 export class ScrapService {
   private readonly logger = new Logger(ScrapService.name);
   private readonly portals: ScrapPortal[];
+  private readonly tagTopics: string[];
 
   constructor(
     @Inject(SCRAPED_ARTICLE_REPOSITORY)
@@ -26,20 +33,28 @@ export class ScrapService {
     @Inject(LLM_PROVIDER)
     private readonly llmProvider: LlmProvider,
     private readonly configService: ConfigService,
+    private readonly categoriesService: CategoriesService,
   ) {
     const scrapConfig = this.configService.get('scrap');
     this.portals = scrapConfig.portals ?? [];
+    this.tagTopics = scrapConfig.tagTopics ?? [];
   }
 
   async run(): Promise<ParsedArticleWithSummary[]> {
     this.logger.log('Starting scrap pipeline...');
 
-    const fetchedArticles: ParsedArticle[] = [];
+    const categories = await this.getArticleCategories();
+    const results: ParsedArticleWithSummary[] = [];
 
     for (const portal of this.portals) {
       try {
         const articles = await this.fetchPortal(portal);
-        fetchedArticles.push(...articles);
+        for (const item of articles) {
+          const processed = await this.processArticle(item, categories);
+          if (processed) {
+            results.push(processed);
+          }
+        }
       } catch (error) {
         this.logger.error(
           `Error fetching portal ${portal.name}: ${error instanceof Error ? error.message : 'Unknown error'}`,
@@ -47,42 +62,29 @@ export class ScrapService {
       }
     }
 
-    const summarized: ParsedArticleWithSummary[] = [];
-    for (const article of fetchedArticles) {
-      const enrichment = await this.enrichArticle(article);
-      summarized.push({ ...article, ...enrichment });
-    }
-
     this.logger.log(
-      `Scrap pipeline completed: ${fetchedArticles.length} articles fetched, ${summarized.filter((a) => a.summary).length} summarized`,
+      `Scrap pipeline completed: ${results.length} articles saved`,
     );
-    return summarized;
+    return results;
   }
 
-  private async enrichArticle(
-    article: ParsedArticle,
-  ): Promise<{ summary: string | null; translatedTitle: string | null }> {
-    try {
-      const result = await this.llmProvider.translateAndSummarize({
-        originalText: article.body,
-        title: article.title,
-        sourceLanguage: 'en',
-        targetLanguage: 'pt-BR',
-        maxSummaryChars: 600,
-      });
-      return {
-        summary: result.summary,
-        translatedTitle: result.translatedTitle,
-      };
-    } catch (error) {
-      this.logger.error(
-        `Error enriching article ${article.title}: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      );
-      return { summary: null, translatedTitle: null };
-    }
+  private async getArticleCategories(): Promise<
+    { id: string; name: string; slug: string }[]
+  > {
+    const categories = await this.categoriesService.findAll();
+    return (categories ?? [])
+      .filter(
+        (c: any) =>
+          c.isActive !== false && !String(c.slug ?? '').startsWith('podcast-'),
+      )
+      .map((c: any) => ({
+        id: c._id.toString(),
+        name: c.name,
+        slug: c.slug,
+      }));
   }
 
-  private async fetchPortal(portal: ScrapPortal): Promise<ParsedArticle[]> {
+  private async fetchPortal(portal: ScrapPortal): Promise<FetchedArticle[]> {
     this.logger.log(`Fetching portal: ${portal.name}`);
 
     const response = await fetch(portal.url, {
@@ -101,87 +103,145 @@ export class ScrapService {
 
     this.logger.log(`Fetched ${articles.length} articles from ${portal.name}`);
 
+    const newArticles: FetchedArticle[] = [];
+
     for (const article of articles) {
+      if (!article.body?.trim()) {
+        continue;
+      }
+
       const existing = article.guid
         ? ((await this.scrapedArticleRepository.findByGuid(article.guid)) ??
           (await this.scrapedArticleRepository.findByUrl(article.url)))
         : await this.scrapedArticleRepository.findByUrl(article.url);
 
-      if (!existing) {
-        await this.scrapedArticleRepository.create({
-          portal: portal.name,
-          url: article.url,
-          title: article.title,
-          body: article.body,
-          guid: article.guid,
-          imageUrl: article.imageUrl,
-        });
+      if (existing) {
+        continue;
       }
+
+      const saved = await this.scrapedArticleRepository.create({
+        portal: portal.name,
+        url: article.url,
+        title: article.title,
+        body: article.body,
+        guid: article.guid,
+        imageUrl: article.imageUrl,
+      });
+
+      newArticles.push({
+        article,
+        scrapedArticleId: saved._id.toString(),
+      });
     }
 
-    return articles;
+    return newArticles;
   }
 
-  private async processArticle(article: any): Promise<void> {
-    this.logger.log(`Processing article: ${article.title}`);
+  private async processArticle(
+    item: FetchedArticle,
+    categories: { id: string; name: string; slug: string }[],
+  ): Promise<ParsedArticleWithSummary | null> {
+    const { article, scrapedArticleId } = item;
 
-    const isDuplicateUrl = await this.contentsRepository.findByOriginalUrl(
-      article.url,
-    );
-    if (isDuplicateUrl) {
-      this.logger.log(`Skipping duplicate URL: ${article.url}`);
-      await this.scrapedArticleRepository.markError(
-        article._id.toString(),
-        'Duplicate URL',
+    try {
+      const result = await this.llmProvider.translateAndSummarize({
+        originalText: article.body,
+        title: article.title,
+        sourceLanguage: 'en',
+        targetLanguage: 'pt-BR',
+        maxSummaryChars: 600,
+        categories,
+        tagTopics: this.tagTopics,
+      });
+
+      const categoryId = this.resolveCategoryId(
+        result.categorySlug,
+        categories,
       );
-      return;
-    }
+      const slug = await this.generateUniqueSlug(result.translatedTitle);
+      const tags = this.resolveTags(result.tags, this.tagTopics);
 
-    const normalizedTitle = article.title
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '');
-    const isDuplicateTitle =
-      await this.contentsRepository.findByTitlePattern(normalizedTitle);
-    if (isDuplicateTitle) {
-      this.logger.log(`Skipping duplicate title: ${article.title}`);
-      await this.scrapedArticleRepository.markError(
-        article._id.toString(),
-        'Duplicate title',
+      const content = await this.contentsRepository.create({
+        type: 'NEWS',
+        title: result.translatedTitle,
+        slug,
+        summary: result.summary,
+        body: result.translatedText.slice(0, 1000),
+        coverImageUrl: article.imageUrl,
+        categoryId,
+        tags,
+        isCurated: false,
+        originalSourceUrl: article.url,
+        originalSourceName: article.sourceName,
+        status: 'PUBLISHED',
+        publishedAt: new Date(),
+      });
+
+      await this.scrapedArticleRepository.markProcessed(
+        scrapedArticleId,
+        result.summary,
+        content._id?.toString() ?? '',
       );
-      return;
+
+      this.logger.log(`Article saved: ${result.translatedTitle}`);
+
+      return {
+        ...article,
+        summary: result.summary,
+        translatedTitle: result.translatedTitle,
+        translatedText: result.translatedText,
+        categorySlug: result.categorySlug,
+        tags,
+        contentId: content._id?.toString() ?? null,
+      };
+    } catch (error) {
+      this.logger.error(
+        `Error processing article ${article.title}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
+      await this.scrapedArticleRepository.markError(
+        scrapedArticleId,
+        error instanceof Error ? error.message : 'Unknown error',
+      );
+      return null;
     }
+  }
 
-    const result = await this.llmProvider.translateAndSummarize({
-      originalText: article.body,
-      sourceLanguage: 'en',
-      targetLanguage: 'pt-BR',
-      maxSummaryChars: 600,
-    });
-
-    const slug = this.generateSlug(article.title);
-
-    const content = await this.contentsRepository.create({
-      type: 'NEWS',
-      title: article.title,
-      slug,
-      summary: result.summary,
-      body: result.translatedText,
-      isCurated: true,
-      originalSourceUrl: article.url,
-      originalSourceName: article.portal,
-      tags: [],
-      status: 'PUBLISHED',
-      publishedAt: new Date(),
-    });
-
-    await this.scrapedArticleRepository.markProcessed(
-      article._id.toString(),
-      result.summary,
-      content._id?.toString() ?? '',
+  private resolveCategoryId(
+    categorySlug: string | undefined,
+    categories: { id: string; name: string; slug: string }[],
+  ): string | undefined {
+    if (!categorySlug) {
+      return undefined;
+    }
+    const normalized = categorySlug.trim().toLowerCase();
+    const match = categories.find(
+      (c) =>
+        c.slug.toLowerCase() === normalized ||
+        c.name.toLowerCase() === normalized,
     );
+    return match?.id;
+  }
 
-    this.logger.log(`Article processed: ${article.title}`);
+  private resolveTags(
+    tags: string[] | undefined,
+    tagTopics: string[],
+  ): string[] {
+    if (!Array.isArray(tags) || tags.length === 0) {
+      return [];
+    }
+    const valid = tagTopics.map((t) => t.toLowerCase());
+    return tags
+      .map((t) => t.trim())
+      .filter((t) => valid.includes(t.toLowerCase()))
+      .slice(0, 5);
+  }
+
+  private async generateUniqueSlug(title: string): Promise<string> {
+    const base = this.generateSlug(title);
+    if (await this.contentsRepository.findBySlug(base)) {
+      return `${base}-${Date.now()}`;
+    }
+    return base;
   }
 
   private generateSlug(title: string): string {
