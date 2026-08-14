@@ -7,6 +7,11 @@ export interface ParsedArticle {
   imageUrl?: string;
 }
 
+export interface ParsedArticleWithSummary extends ParsedArticle {
+  summary?: string | null;
+  translatedTitle?: string | null;
+}
+
 export interface ContentParser {
   parse(html: string, sourceName: string): Promise<ParsedArticle[]>;
 }

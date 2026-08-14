@@ -7,7 +7,10 @@ import type { ContentsRepository } from '../contents/domain/interfaces/contents.
 import { LLM_PROVIDER } from '../../shared/providers/llm/llm.provider.interface';
 import type { LlmProvider } from '../../shared/providers/llm/llm.provider.interface';
 import { ParserFactory } from './domain/parsers/parser.factory';
-import type { ParsedArticle } from './domain/parsers/parser.interface';
+import type {
+  ParsedArticle,
+  ParsedArticleWithSummary,
+} from './domain/parsers/parser.interface';
 import { ScrapPortal } from '../../config/scrap.config';
 
 @Injectable()
@@ -28,7 +31,7 @@ export class ScrapService {
     this.portals = scrapConfig.portals ?? [];
   }
 
-  async run(): Promise<ParsedArticle[]> {
+  async run(): Promise<ParsedArticleWithSummary[]> {
     this.logger.log('Starting scrap pipeline...');
 
     const fetchedArticles: ParsedArticle[] = [];
@@ -44,29 +47,39 @@ export class ScrapService {
       }
     }
 
-    // TODO: reativar a integração com LLM
-    // const unprocessed = await this.scrapedArticleRepository.findUnprocessed();
-    //
-    // for (const article of unprocessed) {
-    //   try {
-    //     await this.processArticle(article);
-    //     processed++;
-    //   } catch (error) {
-    //     this.logger.error(
-    //       `Error processing article ${article.title}: ${error instanceof Error ? error.message : 'Unknown error'}`,
-    //     );
-    //     await this.scrapedArticleRepository.markError(
-    //       article._id.toString(),
-    //       error instanceof Error ? error.message : 'Unknown error',
-    //     );
-    //     errors++;
-    //   }
-    // }
+    const summarized: ParsedArticleWithSummary[] = [];
+    for (const article of fetchedArticles) {
+      const enrichment = await this.enrichArticle(article);
+      summarized.push({ ...article, ...enrichment });
+    }
 
     this.logger.log(
-      `Scrap pipeline completed: ${fetchedArticles.length} articles fetched`,
+      `Scrap pipeline completed: ${fetchedArticles.length} articles fetched, ${summarized.filter((a) => a.summary).length} summarized`,
     );
-    return fetchedArticles;
+    return summarized;
+  }
+
+  private async enrichArticle(
+    article: ParsedArticle,
+  ): Promise<{ summary: string | null; translatedTitle: string | null }> {
+    try {
+      const result = await this.llmProvider.translateAndSummarize({
+        originalText: article.body,
+        title: article.title,
+        sourceLanguage: 'en',
+        targetLanguage: 'pt-BR',
+        maxSummaryChars: 600,
+      });
+      return {
+        summary: result.summary,
+        translatedTitle: result.translatedTitle,
+      };
+    } catch (error) {
+      this.logger.error(
+        `Error enriching article ${article.title}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
+      return { summary: null, translatedTitle: null };
+    }
   }
 
   private async fetchPortal(portal: ScrapPortal): Promise<ParsedArticle[]> {

@@ -22,24 +22,35 @@ export class OpenRouterProvider implements LlmProvider {
 
   async translateAndSummarize(input: {
     originalText: string;
+    title?: string;
     sourceLanguage: string;
     targetLanguage: string;
     maxSummaryChars?: number;
-  }): Promise<{ translatedText: string; summary: string }> {
+  }): Promise<{
+    translatedTitle: string;
+    translatedText: string;
+    summary: string;
+  }> {
     const maxChars = input.maxSummaryChars ?? 600;
 
     const systemPrompt = `You are a professional translator and summarizer for a Brazilian Portuguese news site.
 Tasks:
-1. Translate the following text to Brazilian Portuguese (pt-BR).
-2. Create a concise summary of the translated text, limited to ${maxChars} characters.
+1. Translate the given title to Brazilian Portuguese (pt-BR).
+2. Translate the following text to Brazilian Portuguese (pt-BR).
+3. Create a concise summary of the translated text, limited to ${maxChars} characters.
 
 Respond ONLY with valid JSON in this exact format:
 {
+  "translatedTitle": "the translated title here",
   "translatedText": "the full translated text here",
   "summary": "the concise summary here"
 }
 
 Do not include any other text, markdown, or explanation outside the JSON.`;
+
+    const userMessage = input.title
+      ? `Title:\n${input.title}\n\nText:\n${input.originalText}`
+      : input.originalText;
 
     try {
       const response = await fetch(`${this.baseUrl}/chat/completions`, {
@@ -54,7 +65,7 @@ Do not include any other text, markdown, or explanation outside the JSON.`;
           temperature: 0.3,
           messages: [
             { role: 'system', content: systemPrompt },
-            { role: 'user', content: input.originalText },
+            { role: 'user', content: userMessage },
           ],
         }),
       });
@@ -79,10 +90,12 @@ Do not include any other text, markdown, or explanation outside the JSON.`;
       }
 
       const result = JSON.parse(jsonMatch[0]) as {
+        translatedTitle?: string;
         translatedText?: string;
         summary?: string;
       };
       return {
+        translatedTitle: result.translatedTitle ?? input.title ?? '',
         translatedText: result.translatedText ?? input.originalText,
         summary: result.summary ?? '',
       };

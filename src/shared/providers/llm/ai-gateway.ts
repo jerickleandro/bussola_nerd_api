@@ -32,10 +32,15 @@ export class AiGateway implements LlmProvider {
 
   async translateAndSummarize(input: {
     originalText: string;
+    title?: string;
     sourceLanguage: string;
     targetLanguage: string;
     maxSummaryChars?: number;
-  }): Promise<{ translatedText: string; summary: string }> {
+  }): Promise<{
+    translatedTitle: string;
+    translatedText: string;
+    summary: string;
+  }> {
     return this.activeProvider.translateAndSummarize(input);
   }
 }
