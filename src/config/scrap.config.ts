@@ -17,7 +17,6 @@ export const scrapConfig = registerAs('scrap', () => ({
       url: 'https://rss.slashdot.org/Slashdot/slashdotMain',
       type: 'rss',
     },
-    { name: 'vox', url: 'https://www.vox.com/rss/index.xml', type: 'rss' },
     { name: 'techcrunch', url: 'https://techcrunch.com/feed/', type: 'rss' },
   ] as ScrapPortal[],
   tagTopics: [
