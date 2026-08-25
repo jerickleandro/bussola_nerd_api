@@ -1,0 +1,913 @@
+{
+  "info": {
+    "_postman_id": "0c71cc88-ec8b-4c17-8842-bf7658074c6a",
+    "name": "Bussola Nerd API",
+    "description": "Postman collection generated from the active NestJS controllers. Import this collection together with the local environment.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": []
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": []
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "Status",
+      "item": [
+        {
+          "name": "Root",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}",
+              "host": [
+                "{{apiUrl}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "App Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/status",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "status"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Health Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/health/status",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "health",
+                "status"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.accessToken) {",
+                  "  pm.environment.set('accessToken', json.accessToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{loginEmail}}\",\n  \"password\": \"{{loginPassword}}\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/auth/login",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/auth/me",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/users",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get User By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/users/{{userId}}",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json._id) {",
+                  "  pm.environment.set('userId', json._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Editor Teste\",\n  \"email\": \"editor.teste@example.com\",\n  \"password\": \"123456\",\n  \"role\": \"EDITOR\",\n  \"avatarUrl\": \"https://example.com/avatar.png\",\n  \"bio\": \"Perfil editorial de teste\",\n  \"active\": true\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/users",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Editor Atualizado\",\n  \"bio\": \"Bio atualizada\",\n  \"active\": true\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/users/{{userId}}",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Deactivate User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/users/{{userId}}",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "List Categories",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/categories",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "categories"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Category By Id",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/categories/{{categoryId}}",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "categories",
+                "{{categoryId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json._id) {",
+                  "  pm.environment.set('categoryId', json._id);",
+                  "}",
+                  "if (json.slug) {",
+                  "  pm.environment.set('categorySlug', json.slug);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Games\",\n  \"slug\": \"games\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/categories",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "categories"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Category",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Games Atualizado\",\n  \"slug\": \"games-atualizado\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/categories/{{categoryId}}",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "categories",
+                "{{categoryId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Deactivate Category",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/categories/{{categoryId}}",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "categories",
+                "{{categoryId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contents",
+      "item": [
+        {
+          "name": "List Contents",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/contents?type=NEWS&categories={{categorySlug}}&page=1&limit=10",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "contents"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "NEWS"
+                },
+                {
+                  "key": "categories",
+                  "value": "{{categorySlug}}"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Content By Slug",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/contents/{{contentSlug}}",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "contents",
+                "{{contentSlug}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Content",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json._id) {",
+                  "  pm.environment.set('contentId', json._id);",
+                  "}",
+                  "if (json.slug) {",
+                  "  pm.environment.set('contentSlug', json.slug);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"NEWS\",\n  \"title\": \"Nova noticia de teste\",\n  \"subtitle\": \"Subtitulo curto\",\n  \"slug\": \"nova-noticia-de-teste\",\n  \"summary\": \"Resumo da noticia.\",\n  \"body\": \"Corpo completo da noticia.\",\n  \"coverImageUrl\": \"https://example.com/cover.jpg\",\n  \"categoryId\": \"{{categoryId}}\",\n  \"tags\": [\"games\", \"geek\"],\n  \"isCurated\": true,\n  \"originalSourceUrl\": \"https://example.com/noticia\",\n  \"originalSourceName\": \"Example\",\n  \"authorId\": \"{{userId}}\",\n  \"status\": \"PUBLISHED\",\n  \"publishedAt\": \"2026-05-06T12:00:00.000Z\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/contents",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "contents"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Content By Slug",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Noticia atualizada\",\n  \"summary\": \"Resumo atualizado.\",\n  \"status\": \"PUBLISHED\",\n  \"publishedAt\": \"2026-05-06T12:30:00.000Z\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/contents/{{contentSlug}}",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "contents",
+                "{{contentSlug}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Content By Id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/contents/{{contentId}}",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "contents",
+                "{{contentId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Podcasts",
+      "item": [
+        {
+          "name": "List Episodes",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/podcasts/episodes?categories={{categoryId}}&page=1&limit=10",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "podcasts",
+                "episodes"
+              ],
+              "query": [
+                {
+                  "key": "categories",
+                  "value": "{{categoryId}}"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Podcast By Id",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/podcasts/{{podcastId}}",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "podcasts",
+                "{{podcastId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Podcast",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json._id) {",
+                  "  pm.environment.set('podcastId', json._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Episodio de teste\",\n  \"description\": \"Descricao do episodio.\",\n  \"guest\": [\"Convidado 1\"],\n  \"categoryId\": \"{{categoryId}}\",\n  \"coverImageUrl\": \"https://example.com/podcast.jpg\",\n  \"spotifyId\": \"spotify-test-id\",\n  \"spotifyUrl\": \"https://open.spotify.com/episode/example\",\n  \"publishDate\": \"2026-05-06T12:00:00.000Z\",\n  \"durationInMinutes\": 60,\n  \"status\": \"PUBLISHED\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/podcasts/create",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "podcasts",
+                "create"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Podcast",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Episodio atualizado\",\n  \"durationInMinutes\": 75,\n  \"status\": \"PUBLISHED\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/podcasts/{{podcastId}}",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "podcasts",
+                "{{podcastId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Podcast",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/podcasts/{{podcastId}}",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "podcasts",
+                "{{podcastId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "List Reviews",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/reviews",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "reviews"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Review",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json._id) {",
+                  "  pm.environment.set('reviewId', json._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Review de teste\",\n  \"scores\": [\n    {\n      \"score\": 8.5,\n      \"userId\": \"{{userId}}\"\n    }\n  ],\n  \"type\": \"GAME\",\n  \"year\": 2026,\n  \"genres\": [\"RPG\"],\n  \"platforms\": [\"PC\"],\n  \"synopsis\": \"Sinopse do item avaliado.\",\n  \"cast\": [\"Pessoa 1\"],\n  \"director\": \"Diretor Teste\",\n  \"author\": \"Autor Teste\",\n  \"publisher\": \"Publisher Teste\",\n  \"review\": \"Texto completo da review.\",\n  \"urlPodcastEpisode\": \"https://open.spotify.com/episode/example\",\n  \"urlIdPodcastEpisode\": \"spotify-test-id\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/reviews",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "reviews"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Review",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"review\": \"Texto atualizado da review.\",\n  \"platforms\": [\"PC\", \"Console\"]\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/reviews/{{reviewId}}",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "reviews",
+                "{{reviewId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Releases",
+      "item": [
+        {
+          "name": "List Releases By Month",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/releases?year={{releaseYear}}&month={{releaseMonth}}",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "releases"
+              ],
+              "query": [
+                {
+                  "key": "year",
+                  "value": "{{releaseYear}}"
+                },
+                {
+                  "key": "month",
+                  "value": "{{releaseMonth}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Sync Releases From External API",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/releases/sync",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "releases",
+                "sync"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Schedule",
+      "item": [
+        {
+          "name": "List Upcoming Schedule",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiUrl}}/schedule/upcoming",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "schedule",
+                "upcoming"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Schedule Item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Live de teste\",\n  \"startsAt\": \"2026-05-06T20:00:00.000Z\",\n  \"description\": \"Item de agenda de teste\"\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/schedule",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "schedule"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Integration",
+      "item": [
+        {
+          "name": "Import News From Scrap",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{scrapApiKey}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Noticia importada de teste\",\n  \"text\": \"Texto original coletado pelo servico de scraping.\",\n  \"url\": \"https://example.com/original-news\",\n  \"sourceName\": \"Example News\",\n  \"tags\": [\"games\", \"cinema\"]\n}"
+            },
+            "url": {
+              "raw": "{{apiUrl}}/internal/import/news",
+              "host": [
+                "{{apiUrl}}"
+              ],
+              "path": [
+                "internal",
+                "import",
+                "news"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
