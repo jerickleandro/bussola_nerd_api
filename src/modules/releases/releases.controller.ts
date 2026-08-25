@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Post } from '@nestjs/common';
+import { Controller, Get, ParseIntPipe, Post, Query } from '@nestjs/common';
 import { ReleasesService } from './releases.service';
 
 @Controller('releases')
@@ -6,8 +6,14 @@ export class ReleasesController {
   constructor(private readonly releasesService: ReleasesService) {}
 
   @Get()
-  listByMonth(@Query('year') year: number, @Query('month') month: number) {
-    return this.releasesService.listByMonth(Number(year), Number(month));
+  listByMonth(
+    @Query('year', new ParseIntPipe({ optional: true })) year?: number,
+    @Query('month', new ParseIntPipe({ optional: true })) month?: number,
+  ) {
+    const now = new Date();
+    const resolvedYear = year ?? now.getFullYear();
+    const resolvedMonth = month ?? now.getMonth() + 1;
+    return this.releasesService.listByMonth(resolvedYear, resolvedMonth);
   }
 
   @Post('sync')
