@@ -1,6 +1,8 @@
 import { Controller, Get, ParseIntPipe, Post, Query } from '@nestjs/common';
 import { ReleasesService } from './releases.service';
+import { Public } from '../../common/decorators/public.decorator';
 
+@Public()
 @Controller('releases')
 export class ReleasesController {
   constructor(private readonly releasesService: ReleasesService) {}
