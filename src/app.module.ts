@@ -23,10 +23,10 @@ import { ContentsModule } from './modules/contents/contents.module';
 import { PodcastsModule } from './modules/podcasts/podcasts.module';
 import { ReviewsModule } from './modules/reviews/reviews.module';
 import { ReleasesModule } from './modules/releases/releases.module';
-import { ScheduleStubModule } from './modules/schedule/schedule.module';
+import { ScheduleModule } from './modules/schedule/schedule.module';
 import { IntegrationModule } from './modules/integration/integration.module';
 import { ScrapModule } from './modules/scrap/scrap.module';
-import { ScheduleModule } from '@nestjs/schedule';
+import { ScheduleModule as NestScheduleModule } from '@nestjs/schedule';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 @Module({
@@ -56,10 +56,10 @@ import { RolesGuard } from './common/guards/roles.guard';
     PodcastsModule,
     ReviewsModule,
     ReleasesModule,
-    ScheduleStubModule,
+    ScheduleModule,
     IntegrationModule,
     ScrapModule,
-    ScheduleModule.forRoot(),
+    NestScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [
